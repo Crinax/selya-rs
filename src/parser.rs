@@ -1,3 +1,5 @@
+pub mod domain_parsers;
+
 use std::ops::{RangeBounds, Bound};
 
 pub type ParserResult<'a, Output> = Result<(&'a str, Output), &'a str>;
@@ -46,30 +48,6 @@ pub fn identifier<'a>(input: &'a str) -> ParserResult<'a, String> {
     Ok((&input[next_index..], matched))
 }
 
-pub fn one_or_more<'a, P, A>(parser: P) -> impl Parser<'a, Vec<A>>
-where
-    P: Parser<'a, A>
-{
-    move |input| {
-        let mut _input = input;
-        let mut result = Vec::new();
-
-        if let Ok((next_value, first_item)) = parser.parse(_input) {
-            _input = next_value;
-            result.push(first_item);
-        } else {
-            return Err(_input);
-        }
-
-        while let Ok((next_value, item)) = parser.parse(_input) {
-            _input = next_value;
-            result.push(item);
-        }
-
-        Ok((_input, result))
-    }
-}
-
 // Доделотьб
 pub fn repeats<'a, P, A, R>(parser: P, range: R) -> impl Parser<'a, Vec<A>>
 where
@@ -109,14 +87,11 @@ where
     }
 }
 
-pub fn _one_or_more<'a, P, A>(parser: P) -> impl Parser<'a, Vec<A>>
+pub fn one_or_more<'a, P, A>(parser: P) -> impl Parser<'a, Vec<A>>
 where
     P: Parser<'a, A> + Copy
 {
-    map(pair(parser, zero_or_more(parser)), |(head, mut tail)| {
-        tail.insert(0, head);
-        tail
-    })
+    repeats(parser, 1..)
 }
 
 pub fn any_char(input: &str) -> ParserResult<char> {
@@ -128,6 +103,10 @@ pub fn any_char(input: &str) -> ParserResult<char> {
 
 pub fn whitespace_char<'a>() -> impl Parser<'a, char> {
     predicate(any_char, |c| c.is_whitespace())
+}
+
+pub fn whitespace<'a>(repeates_count: impl RangeBounds<usize>) -> impl Parser<'a, Vec<char>> {
+    repeats(predicate(any_char, |c| c.is_whitespace()), repeates_count)
 }
 
 pub fn predicate<'a, P, A, F>(parser: P, predicate: F) -> impl Parser<'a, A>
@@ -150,17 +129,7 @@ pub fn zero_or_more<'a, P, A>(parser: P) -> impl Parser<'a, Vec<A>>
 where
     P: Parser<'a, A>
 {
-    move |input| {
-        let mut _input = input;
-        let mut result = Vec::new();
-
-        while let Ok((next_value, item)) = parser.parse(_input) {
-            _input = next_value;
-            result.push(item);
-        }
-
-        Ok((_input, result))
-    }
+    repeats(parser, 0..)
 }
 
 pub fn pair<'a, P1, P2, R1, R2>(parser1: P1, parser2: P2)
