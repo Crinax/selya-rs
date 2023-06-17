@@ -5,5 +5,7 @@ pub use crate::domain::Memory;
 use crate::parser::domain_parsers::selya_parser;
 
 pub trait Plugin {
-    fn execute()
+    fn make_executor<F>(memory: &Memory) -> F
+    where
+        F: Fn(&[dyn Plugin]);
 }

@@ -1,5 +1,7 @@
 use std::time::Instant;
 
+use domain::Memory;
+
 use crate::parser::{
     domain_parsers::selya_parser, Parser,
 };
@@ -23,4 +25,14 @@ fn main() {
 
     println!("{:#?}", parser_result);
     println!("\nElapsed: {}µs", end);
+
+    let mut boxed_memory = Box::new(Memory::new(0xf));
+
+    boxed_memory.write(0xf);
+    match boxed_memory.shift_right() {
+        Err(value) => panic!("{:?}", value),
+        _ => (),
+    };
+
+    println!("{:#?}", boxed_memory);
 }
