@@ -1,12 +1,12 @@
 use std::time::Instant;
 
 use crate::parser::{
-    any_char, domain_parsers::selya_parser, match_return_literal, pair, repeats, right, whitespace,
-    zero_or_more, Parser,
+    domain_parsers::selya_parser, Parser,
 };
 
 mod domain;
 mod parser;
+mod plugin;
 
 fn main() {
     let start = Instant::now();

@@ -7,5 +7,4 @@ pub enum Token {
     ShiftWordRight,
     Add,
     AddModulo,
-    UnrecognizedToken,
 }

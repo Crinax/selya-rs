@@ -24,29 +24,6 @@ pub fn match_literal<'a>(expected: &'static str) -> impl Parser<'a, ()> {
     }
 }
 
-pub fn identifier<'a>(input: &'a str) -> ParserResult<'a, String> {
-    let mut matched = String::new();
-    let mut chars = input.chars();
-
-    match chars.next() {
-        Some(value) if value.is_alphabetic() => matched.push(value),
-        _ => return Err(input),
-    };
-
-    while let Some(value) = chars.next() {
-        if !(value.is_alphanumeric() || value == '-') {
-            break;
-        }
-
-        matched.push(value);
-    }
-
-    let next_index = matched.len();
-
-    Ok((&input[next_index..], matched))
-}
-
-// Доделотьб
 pub fn repeats<'a, P, A, R>(parser: P, range: R) -> impl Parser<'a, Vec<A>>
 where
     P: Parser<'a, A>,
@@ -85,13 +62,6 @@ where
     }
 }
 
-pub fn one_or_more<'a, P, A>(parser: P) -> impl Parser<'a, Vec<A>>
-where
-    P: Parser<'a, A> + Copy,
-{
-    repeats(parser, 1..)
-}
-
 pub fn any_char(input: &str) -> ParserResult<char> {
     match input.chars().next() {
         Some(value) => Ok((&input[value.len_utf8()..], value)),
@@ -104,7 +74,7 @@ pub fn whitespace_char<'a>() -> impl Parser<'a, char> {
 }
 
 pub fn whitespace<'a>(repeates_count: impl RangeBounds<usize>) -> impl Parser<'a, Vec<char>> {
-    repeats(predicate(any_char, |c| c.is_whitespace()), repeates_count)
+    repeats(whitespace_char(), repeates_count)
 }
 
 pub fn predicate<'a, P, A, F>(parser: P, predicate: F) -> impl Parser<'a, A>
@@ -158,14 +128,6 @@ where
 
 pub fn match_return_literal<'a>(expected: &'static str) -> impl Parser<'a, String> {
     map(match_literal(expected), |_| expected.into())
-}
-
-pub fn left<'a, P1, P2, R1, R2>(parser1: P1, parser2: P2) -> impl Parser<'a, R1>
-where
-    P1: Parser<'a, R1>,
-    P2: Parser<'a, R2>,
-{
-    map(pair(parser1, parser2), |(_left, _)| _left)
 }
 
 pub fn right<'a, P1, P2, R1, R2>(parser1: P1, parser2: P2) -> impl Parser<'a, R2>

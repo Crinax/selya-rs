@@ -81,7 +81,7 @@ where
     right(whitespace(0..), parser)
 }
 
-type SelyaParserResult = (Token, Vec<Token>);
+pub type SelyaParserResult = (Token, Vec<Token>);
 
 pub fn selya_parser<'a>() -> impl Parser<'a, SelyaParserResult> {
     pair(
