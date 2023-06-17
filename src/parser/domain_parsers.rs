@@ -16,7 +16,7 @@ fn selya_number<'a>() -> impl Parser<'a, Token> {
                 |chars| chars.into_iter().collect::<String>(),
             ),
         ),
-        |value| Token::Number(i128::from_str_radix(&value, 16).unwrap()),
+        |value| Token::Number(u16::from_str_radix(&value, 16).unwrap()),
     )
 }
 
