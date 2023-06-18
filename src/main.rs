@@ -10,6 +10,7 @@ mod domain;
 mod parser;
 mod plugin;
 mod pipeline;
+mod memory_exector;
 
 fn main() {
     // let start = Instant::now();
@@ -26,16 +27,4 @@ fn main() {
     //
     // println!("{:#?}", parser_result);
     // println!("\nElapsed: {}µs", end);
-
-
-
-    let mut boxed_memory = Box::new(Memory::new(0xf));
-
-    boxed_memory.write(0xf);
-    match boxed_memory.shift_right() {
-        Err(value) => panic!("{:?}", value),
-        _ => (),
-    };
-
-    println!("{:#?}", boxed_memory);
 }
