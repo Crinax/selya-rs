@@ -24,7 +24,7 @@ impl MemoryExecutor {
 
     pub fn execute(&self, order: Vec<String>) {
         for name in order {
-            self.plugins[&name].execute(self.memory.borrow_mut());
+            self.plugins[&name].execute(self.memory.clone());
         }
     }
 }

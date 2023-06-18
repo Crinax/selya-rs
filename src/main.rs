@@ -4,11 +4,7 @@ use domain::Memory;
 use memory_exector::MemoryExecutor;
 use parser::domain_parsers::selya_parse_from_string;
 use pipeline::Pipeline;
-use plugin::memory_plugin_string::{self, print_as_utf8};
-
-use crate::parser::{
-    domain_parsers::selya_parser, Parser,
-};
+use plugin::memory_plugin_string::print_as_utf8;
 
 mod domain;
 mod parser;
@@ -36,9 +32,12 @@ fn main() {
     pipeline.use_parser(selya_parse_from_string);
     pipeline.use_memory_ctr(Memory::new);
     pipeline.use_memory_executor(|boxed_memory| {
-        let memory_exector = MemoryExecutor::new(*boxed_memory);
+        let mut memory_exector = MemoryExecutor::new(*boxed_memory);
 
-        memory_exector.register_plugin("memory-print".into(), Box::new(print_as_utf8));
+        memory_exector.register_plugin(
+            "memory-print".into(),
+            Box::new(print_as_utf8)
+        );
     });
 
     // let start = Instant::now();
