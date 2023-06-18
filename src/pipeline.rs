@@ -1,17 +1,14 @@
-use std::cell::RefCell;
 use std::fs::File;
 use std::io::Read;
-use std::ops::{Deref, DerefMut};
-use std::rc::Rc;
 
-use crate::parser::Parser;
 use crate::parser::domain_parsers::SelyaParserResult;
 use crate::domain::Memory;
+use crate::parser::tokenizer::UnwrapToken;
 
 pub struct Pipeline<'a> {
     is_file: bool,
     input: Box<dyn Read + 'a>,
-    parser: Option<Box<dyn Parser<'a, SelyaParserResult> + 'a>>,
+    parser: Option<Box<dyn Fn(String) -> Result<SelyaParserResult, String> + 'a>>,
     memory_ctr: Option<Box<dyn Fn(u16) -> Memory + 'a>>,
     memory_executor: Option<Box<dyn Fn(Box<Memory>) + 'a>>,
 }
@@ -29,7 +26,7 @@ impl<'a> Pipeline<'a> {
 
     pub fn use_parser<T>(&mut self, parser: T)
     where
-        T: Parser<'a, SelyaParserResult> + 'a
+        T: Fn(String) -> Result<SelyaParserResult, String> + 'a
     {
         self.parser = Some(Box::new(parser))
     }
@@ -65,21 +62,23 @@ impl<'a> Pipeline<'a> {
             return;
         }
 
-        let mut buffer = Rc::new(RefCell::new(String::new()));
-        let result = self.input.read_to_string(&mut buffer.borrow_mut());
+        let mut buffer = String::new();
+        let Ok(_) = self.input.read_to_string(&mut buffer) else {
+            self.print_pipeline_error("IoError", "cannot read from file");
+            return;
+        };
 
-        match result {
-            Ok(_) => {
-                let parser = self.parser.as_ref().unwrap();
-                let memory_ctr = self.memory_ctr.as_ref().unwrap();
-                let memory_executor = self.memory_executor.as_ref().unwrap();
-                let parser_result = parser.parse(buffer.borrow().as_str());
+        let parser = self.parser.as_ref().unwrap();
+        let memory_ctr = self.memory_ctr.as_ref().unwrap();
+        let memory_executor = self.memory_executor.as_ref().unwrap();
 
-                let mut parsing_result: Option<SelyaParserResult> = None;
-            },
-            Err(_) => {
-                self.print_pipeline_error("IoError", "cannot read file");
-            },
-        }
+        let Ok(parser_result) = parser(buffer) else {
+            self.print_pipeline_error("ParserError", "invalid syntax");
+            return;
+        };
+
+        let memory = Box::new(memory_ctr(parser_result.0.unwrap()));
+        
+        memory_executor(memory);
     }
 }

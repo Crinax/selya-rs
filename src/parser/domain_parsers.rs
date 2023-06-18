@@ -1,6 +1,6 @@
 use super::{
     any_char, either, map, match_literal, match_return_literal, pair, predicate, repeats, right,
-    tokenizer::Token, whitespace, zero_or_more, Parser,
+    tokenizer::Token, whitespace, zero_or_more, Parser, ParserResult,
 };
 
 fn selya_digit_sign<'a>() -> impl Parser<'a, ()> {
@@ -88,4 +88,11 @@ pub fn selya_parser<'a>() -> impl Parser<'a, SelyaParserResult> {
         with_whitespaces_before(selya_number()),
         zero_or_more(with_whitespaces_before(selya_one_of_token())),
     )
+}
+
+pub fn selya_parse_from_string(input: String) -> Result<SelyaParserResult, String> {
+    match selya_parser().parse(input.as_str()) {
+        Ok(result) => Ok(result.1),
+        _ => Err("parsing error".into()),
+    }
 }
