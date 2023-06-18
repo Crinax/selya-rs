@@ -1,8 +1,9 @@
 use std::fs::File;
 use std::io::Read;
 
+use crate::interpreter::{interprete, InterpreterError};
 use crate::parser::domain_parsers::SelyaParserResult;
-use crate::domain::Memory;
+use crate::domain::{Memory, MemoryError};
 use crate::parser::tokenizer::UnwrapToken;
 
 pub struct Pipeline<'a> {
@@ -14,10 +15,10 @@ pub struct Pipeline<'a> {
 }
 
 impl<'a> Pipeline<'a> {
-    fn from_file(file: File) -> Box<Pipeline<'a>> {
+    pub fn from_file(value: File) -> Box<Pipeline<'a>> {
         Box::new(Pipeline {
             is_file: true,
-            input: Box::new(file),
+            input: Box::new(value),
             parser: None,
             memory_ctr: None,
             memory_executor: None,
@@ -77,8 +78,26 @@ impl<'a> Pipeline<'a> {
             return;
         };
 
-        let memory = Box::new(memory_ctr(parser_result.0.unwrap()));
-        
+        let mut memory = Box::new(memory_ctr(parser_result.0.unwrap()));
+
+        match interprete(memory, parser_result.1) {
+            Ok(_) => (),
+            Err(InterpreterError::MemErr(err)) => match err {
+                MemoryError::Overflow => self.print_pipeline_error(
+                    "Memory::Overflow",
+                    "memory overflow",
+                ),
+                MemoryError::OutOfRange => self.print_pipeline_error(
+                    "Memory::OutOfRange",
+                    "memory carriage out of range",
+                ),
+            },
+            Err(InterpreterError::UsingBinaryAsUnary) => self.print_pipeline_error(
+                "Interpreter::UsingBinaryAsUnary",
+                "cannot using binary operator such [+] and [^] as unary"
+            ),
+        }
+                
         memory_executor(memory);
     }
 }

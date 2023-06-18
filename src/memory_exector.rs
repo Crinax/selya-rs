@@ -11,18 +11,18 @@ pub struct MemoryExecutor {
 }
 
 impl MemoryExecutor {
-    fn new(memory: Memory) -> Self {
+    pub fn new(memory: Memory) -> Self {
         MemoryExecutor {
             plugins: HashMap::new(),
             memory: Rc::new(RefCell::new(memory)),
         }
     }
 
-    fn register_plugin(&mut self, name: String, plugin: Box<dyn SelyaPlugin>) {
+    pub fn register_plugin(&mut self, name: String, plugin: Box<dyn SelyaPlugin>) {
         self.plugins.insert(name, plugin);
     }
 
-    fn execute(&self, order: Vec<String>) {
+    pub fn execute(&self, order: Vec<String>) {
         for name in order {
             self.plugins[&name].execute(self.memory.borrow_mut());
         }

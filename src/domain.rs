@@ -83,12 +83,33 @@ impl Memory {
         self.shift(1, ShiftDirection::Left)
     }
 
-    pub fn rotate(&mut self, value: usize, direction: ShiftDirection) {
+    fn rotate(&mut self, value: usize, direction: ShiftDirection) {
         let guard: usize = self.size.into();
 
         match direction {
             ShiftDirection::Right => self.memory.rotate_right(value % guard),
             ShiftDirection::Left => self.memory.rotate_left(value % guard),
         }
+    }
+
+    pub fn shift_word_left(&mut self) {
+        self.rotate(1, ShiftDirection::Left)
+    }
+
+    pub fn shift_word_right(&mut self) {
+        self.rotate(1, ShiftDirection::Right)
+    }
+
+    pub fn get_size(&self) -> u16 {
+        self.size
+    }
+}
+
+impl IntoIterator for Memory {
+    type IntoIter = std::vec::IntoIter<u16>;
+    type Item = u16;
+    
+    fn into_iter(self) -> Self::IntoIter {
+        self.memory.into_iter()
     }
 }

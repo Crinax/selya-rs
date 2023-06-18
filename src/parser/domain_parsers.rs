@@ -1,6 +1,6 @@
 use super::{
     any_char, either, map, match_literal, match_return_literal, pair, predicate, repeats, right,
-    tokenizer::Token, whitespace, zero_or_more, Parser, ParserResult,
+    tokenizer::Token, whitespace, zero_or_more, Parser,
 };
 
 fn selya_digit_sign<'a>() -> impl Parser<'a, ()> {
