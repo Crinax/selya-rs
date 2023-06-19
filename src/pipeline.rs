@@ -6,11 +6,13 @@ use crate::interpreter::{interprete, InterpreterError};
 use crate::parser::domain_parsers::SelyaParserResult;
 use crate::parser::tokenizer::UnwrapToken;
 
+pub type ParserInPipeline<'a> = Box<dyn Fn(String) -> Result<SelyaParserResult, String> + 'a>;
+
 pub struct Pipeline<'a> {
     #[allow(dead_code)]
     is_file: bool,
     input: Box<dyn Read + 'a>,
-    parser: Option<Box<dyn Fn(String) -> Result<SelyaParserResult, String> + 'a>>,
+    parser: Option<ParserInPipeline<'a>>,
     memory_ctr: Option<Box<dyn Fn(u16) -> Memory + 'a>>,
     memory_executor: Option<Box<dyn Fn(Box<Memory>) + 'a>>,
 }
