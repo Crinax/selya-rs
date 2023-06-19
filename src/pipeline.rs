@@ -1,9 +1,9 @@
 use std::fs::File;
 use std::io::Read;
 
+use crate::domain::{Memory, MemoryError};
 use crate::interpreter::{interprete, InterpreterError};
 use crate::parser::domain_parsers::SelyaParserResult;
-use crate::domain::{Memory, MemoryError};
 use crate::parser::tokenizer::UnwrapToken;
 
 pub struct Pipeline<'a> {
@@ -28,21 +28,21 @@ impl<'a> Pipeline<'a> {
 
     pub fn use_parser<T>(&mut self, parser: T)
     where
-        T: Fn(String) -> Result<SelyaParserResult, String> + 'a
+        T: Fn(String) -> Result<SelyaParserResult, String> + 'a,
     {
         self.parser = Some(Box::new(parser))
     }
 
     pub fn use_memory_ctr<T>(&mut self, memory_ctr: T)
     where
-        T: Fn(u16) -> Memory + 'a
+        T: Fn(u16) -> Memory + 'a,
     {
         self.memory_ctr = Some(Box::new(memory_ctr))
     }
 
     pub fn use_memory_executor<T>(&mut self, memory_executor: T)
     where
-        T: Fn(Box<Memory>) + 'a
+        T: Fn(Box<Memory>) + 'a,
     {
         self.memory_executor = Some(Box::new(memory_executor))
     }
@@ -84,21 +84,19 @@ impl<'a> Pipeline<'a> {
         match interprete(&mut memory, parser_result.1) {
             Ok(_) => (),
             Err(InterpreterError::MemErr(err)) => match err {
-                MemoryError::Overflow => self.print_pipeline_error(
-                    "Memory::Overflow",
-                    "memory overflow",
-                ),
-                MemoryError::OutOfRange => self.print_pipeline_error(
-                    "Memory::OutOfRange",
-                    "memory carriage out of range",
-                ),
+                MemoryError::Overflow => {
+                    self.print_pipeline_error("Memory::Overflow", "memory overflow")
+                }
+                MemoryError::OutOfRange => {
+                    self.print_pipeline_error("Memory::OutOfRange", "memory carriage out of range")
+                }
             },
             Err(InterpreterError::UsingBinaryAsUnary) => self.print_pipeline_error(
                 "Interpreter::UsingBinaryAsUnary",
-                "cannot using binary operator such [+] and [^] as unary"
+                "cannot using binary operator such [+] and [^] as unary",
             ),
         };
-                
+
         memory_executor(memory);
     }
 }

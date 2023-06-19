@@ -2,12 +2,12 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::plugin::SelyaPlugin;
 use crate::domain::Memory;
+use crate::plugin::SelyaPlugin;
 
 pub struct MemoryExecutor {
     plugins: HashMap<String, Box<dyn SelyaPlugin>>,
-    memory: Rc<RefCell<Memory>>
+    memory: Rc<RefCell<Memory>>,
 }
 
 impl MemoryExecutor {

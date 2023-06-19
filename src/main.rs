@@ -1,4 +1,4 @@
-use std::{time::Instant, fs::File};
+use std::{fs::File, time::Instant};
 
 use domain::Memory;
 use memory_exector::MemoryExecutor;
@@ -7,11 +7,11 @@ use pipeline::Pipeline;
 use plugin::memory_plugin_string::print_as_utf8;
 
 mod domain;
-mod parser;
-mod plugin;
-mod pipeline;
-mod memory_exector;
 mod interpreter;
+mod memory_exector;
+mod parser;
+mod pipeline;
+mod plugin;
 
 fn help() {
     println!("selya {{path}}");
@@ -34,10 +34,7 @@ fn main() {
     pipeline.use_memory_executor(|boxed_memory| {
         let mut memory_executor = MemoryExecutor::new(*boxed_memory);
 
-        memory_executor.register_plugin(
-            "memory-print".into(),
-            Box::new(print_as_utf8)
-        );
+        memory_executor.register_plugin("memory-print".into(), Box::new(print_as_utf8));
 
         memory_executor.execute(vec!["memory_executor".into()]);
     });

@@ -60,18 +60,14 @@ impl Memory {
 
     fn shift(&mut self, value: u16, direction: ShiftDirection) -> Result<u16, MemoryError> {
         match direction {
-            ShiftDirection::Left => {
-                match self.position_as_u16.checked_add(value) {
-                    Some(value) => Ok(self.update_position(value)),
-                    None => Err(MemoryError::OutOfRange),
-                }
+            ShiftDirection::Left => match self.position_as_u16.checked_add(value) {
+                Some(value) => Ok(self.update_position(value)),
+                None => Err(MemoryError::OutOfRange),
             },
-            ShiftDirection::Right => {
-                match self.position_as_u16.checked_sub(value) {
-                    Some(value) => Ok(self.update_position(value)),
-                    None => Err(MemoryError::OutOfRange)
-                }
-            }
+            ShiftDirection::Right => match self.position_as_u16.checked_sub(value) {
+                Some(value) => Ok(self.update_position(value)),
+                None => Err(MemoryError::OutOfRange),
+            },
         }
     }
 
@@ -113,7 +109,7 @@ impl Memory {
 impl IntoIterator for Memory {
     type IntoIter = std::vec::IntoIter<u16>;
     type Item = u16;
-    
+
     fn into_iter(self) -> Self::IntoIter {
         self.memory.into_iter()
     }
