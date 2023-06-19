@@ -100,8 +100,13 @@ impl Memory {
         self.rotate(1, ShiftDirection::Right)
     }
 
+    #[allow(dead_code)]
     pub fn get_size(&self) -> u16 {
         self.size
+    }
+
+    pub fn memory_view(&self) -> Vec<u16> {
+        self.memory.clone()
     }
 }
 

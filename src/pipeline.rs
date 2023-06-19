@@ -7,6 +7,7 @@ use crate::domain::{Memory, MemoryError};
 use crate::parser::tokenizer::UnwrapToken;
 
 pub struct Pipeline<'a> {
+    #[allow(dead_code)]
     is_file: bool,
     input: Box<dyn Read + 'a>,
     parser: Option<Box<dyn Fn(String) -> Result<SelyaParserResult, String> + 'a>>,
@@ -80,7 +81,7 @@ impl<'a> Pipeline<'a> {
 
         let mut memory = Box::new(memory_ctr(parser_result.0.unwrap()));
 
-        match interprete(memory, parser_result.1) {
+        match interprete(&mut memory, parser_result.1) {
             Ok(_) => (),
             Err(InterpreterError::MemErr(err)) => match err {
                 MemoryError::Overflow => self.print_pipeline_error(
@@ -96,7 +97,7 @@ impl<'a> Pipeline<'a> {
                 "Interpreter::UsingBinaryAsUnary",
                 "cannot using binary operator such [+] and [^] as unary"
             ),
-        }
+        };
                 
         memory_executor(memory);
     }

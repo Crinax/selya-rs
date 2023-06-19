@@ -6,7 +6,7 @@ pub enum InterpreterError {
     MemErr(MemoryError),
 }
 
-pub fn interprete(mut memory: Box<Memory>, tokens: Vec<Token>) -> Result<(), InterpreterError> {
+pub fn interprete(memory: &mut Box<Memory>, tokens: Vec<Token>) -> Result<(), InterpreterError> {
     let mut next_should_be_number = false;
     let mut token_before: Option<Token> = None;
 
