@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "combinators"
+name = "selya"
 version = "0.1.0"
