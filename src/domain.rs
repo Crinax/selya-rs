@@ -60,11 +60,11 @@ impl Memory {
 
     fn shift(&mut self, value: u16, direction: ShiftDirection) -> Result<u16, MemoryError> {
         match direction {
-            ShiftDirection::Left => match self.position_as_u16.checked_add(value) {
+            ShiftDirection::Left => match self.position_as_u16.checked_sub(value) {
                 Some(value) => Ok(self.update_position(value)),
                 None => Err(MemoryError::OutOfRange),
             },
-            ShiftDirection::Right => match self.position_as_u16.checked_sub(value) {
+            ShiftDirection::Right => match self.position_as_u16.checked_add(value) {
                 Some(value) => Ok(self.update_position(value)),
                 None => Err(MemoryError::OutOfRange),
             },
