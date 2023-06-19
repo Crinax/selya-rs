@@ -87,16 +87,21 @@ impl<'a> Pipeline<'a> {
             Ok(_) => (),
             Err(InterpreterError::MemErr(err)) => match err {
                 MemoryError::Overflow => {
-                    self.print_pipeline_error("Memory::Overflow", "memory overflow")
+                    self.print_pipeline_error("Memory::Overflow", "memory overflow");
+                    return;
                 }
                 MemoryError::OutOfRange => {
-                    self.print_pipeline_error("Memory::OutOfRange", "memory carriage out of range")
+                    self.print_pipeline_error("Memory::OutOfRange", "memory carriage out of range");
+                    return;
                 }
             },
-            Err(InterpreterError::UsingBinaryAsUnary) => self.print_pipeline_error(
-                "Interpreter::UsingBinaryAsUnary",
-                "cannot using binary operator such [+] and [^] as unary",
-            ),
+            Err(InterpreterError::UsingBinaryAsUnary) => {
+                self.print_pipeline_error(
+                    "Interpreter::UsingBinaryAsUnary",
+                    "cannot using binary operator such [+] and [^] as unary",
+                );
+                return;
+            }
         };
 
         memory_executor(memory);

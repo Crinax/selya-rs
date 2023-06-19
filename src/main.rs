@@ -36,7 +36,7 @@ fn main() {
 
         memory_executor.register_plugin("memory-print".into(), Box::new(print_as_utf8));
 
-        memory_executor.execute(vec!["memory_executor".into()]);
+        memory_executor.execute(vec!["memory-print".into()]);
     });
 
     let start = Instant::now();
