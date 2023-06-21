@@ -24,9 +24,12 @@ pub fn interprete(memory: &mut Box<Memory>, tokens: Vec<Token>) -> Result<(), In
                         if let Err(value) = memory.add(value) {
                             return Err(InterpreterError::MemErr(value));
                         }
+
+                        continue;
                     }
                     Token::AddModulo => {
                         memory.add_modulo(value);
+                        continue;
                     }
                     _ => {
                         return Err(InterpreterError::UsingBinaryAsUnary);
