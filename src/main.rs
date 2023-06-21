@@ -26,7 +26,10 @@ fn main() {
         return;
     }
 
-    let Ok(file) = File::open(args[1].clone()) else { panic!("Cannot open file"); };
+    let Ok(file) = File::open(args[1].clone()) else {
+        println!("[Selya::FileReadError]: cannot open file");
+        return;
+    };
     let mut pipeline = Pipeline::from_file(file);
 
     pipeline.use_parser(selya_parse_from_string);
