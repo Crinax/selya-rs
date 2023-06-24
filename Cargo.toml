@@ -6,7 +6,7 @@ authors = ["Crinax <agreedeth@gmail.com>"]
 description = "SELYA - Specific Language for Young and Adult :D"
 repository = "https://github.com/Crinax/selya-rs.git"
 readme = "README.md"
-keywords = ["cli", "interpretator", "selya", "esoteric", "language", "command-line-utilities"]
+keywords = ["cli", "interpretator", "selya", "esoteric", "language"]
 license = "MIT"
 license-file = "LICENSE"
 
