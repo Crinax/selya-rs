@@ -1,6 +1,12 @@
 # Selya
 SELYA (Special Esoteric Language for Young and Adult) -- it is esoteric language for everyone based on hex :D
 
+## Installation
+
+```sh
+cargo install selya --features clap
+```
+
 ## Syntax
 
 So, probably, all of you already know, that in most programming languages such string as `0xA2` -- is it hexadecimal number
