@@ -5,4 +5,19 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
+[dependencies.clap]
+version = "4.3.8"
+features = ["derive"]
+optional = true
+
+[lib]
+name = "selya"
+path = "src/lib.rs"
+
+[[bin]]
+name = "selya"
+path = "src/bin.rs"
+
+[features]
+default = []
+executable = ["clap"]

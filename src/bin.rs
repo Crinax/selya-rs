@@ -1,32 +1,31 @@
 use std::{fs::File, time::Instant};
 
-use domain::Memory;
-use memory_exector::MemoryExecutor;
-use parser::domain_parsers::selya_parse_from_string;
-use pipeline::Pipeline;
-use plugin::memory_plugin_string::print_as_utf8;
+use selya::{
+    Memory,
+    MemoryExecutor,
+    selya_parse_from_string,
+    Pipeline,
+    memory_plugin_string::print_as_utf8
+};
+use clap::Parser;
 
-mod domain;
-mod interpreter;
-mod memory_exector;
-mod parser;
-mod pipeline;
-mod plugin;
 
-fn help() {
-    println!("selya {{path}}");
-    println!("\t- {{path}} - path to source file");
+/// SELYA - Special Esoteric Language for Young and Adult
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Path to source file
+    file: String,
+
+    /// Don't print execution time after execution
+    #[arg(short, long)]
+    quit: bool,
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let args = Args::parse();
 
-    if args.len() < 2 {
-        help();
-        return;
-    }
-
-    let Ok(file) = File::open(args[1].clone()) else {
+    let Ok(file) = File::open(args.file) else {
         println!("[Selya::FileReadError]: cannot open file");
         return;
     };
@@ -46,5 +45,7 @@ fn main() {
     pipeline.start();
     let end = start.elapsed().as_micros();
 
-    println!("\nElapsed: {}µs", end);
+    if !args.quit {
+        println!("\nElapsed: {}µs", end);
+    }
 }
