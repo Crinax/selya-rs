@@ -6,8 +6,9 @@ authors = ["Crinax <agreedeth@gmail.com>"]
 description = "SELYA - Specific Language for Young and Adult :D"
 repository = "https://github.com/Crinax/selya-rs.git"
 readme = "https://github.com/Crinax/selya-rs/blob/master/README.md"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+keywords = ["cli", "interpretator", "selya", "esoteric", "language", "command-line-utilities"]
+license = "MIT"
+license-file = "LICENSE"
 
 [dependencies.clap]
 version = "4.3.8"
